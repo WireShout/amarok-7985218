@@ -24,17 +24,25 @@ import java.util.Date;
 import java.util.TimeZone;
 
 public class Run {
-	
+
 	private static ArrayList<AuthorInfo> authorList = new ArrayList<AuthorInfo>();
 	
 	public static void main(String[] args) throws InterruptedException{
+        // print banner
 		System.out.println("-------Amarok GPLv2 License Header Checker--------");
 		System.out.println("-Created by Jason Spriggs for Google Code-In 2012-");
 		System.out.println("--------------------------------------------------");
-		System.out.println("Report Started At " + getTime());
-		
-		String fullPath = "/home/jason/workspace/amarok/amarok-src/"; //Change this to your working directory
-		
+
+        // handle args
+        if (args.length == 0 || args.length > 1) {
+            System.out.println("Usage: java Run AMAROK_DIR");
+            return;
+        }
+
+		String fullPath = args[0]; //Change this to your working directory
+
+		// start reporting
+        System.out.println("Report Started At " + getTime());
 		try {
 			PrintWriter out = new PrintWriter(new FileWriter("check.log"));
 			PrintWriter outStats = new PrintWriter(new FileWriter("stats.log"));
@@ -43,7 +51,7 @@ public class Run {
 			out.println("--------------------------------------------------");
 			out.println("Report Started At " + getTime());
 			out.println("--------------------------------------------------");
-			listAndCheck(fullPath, out);
+			listAndCheck(new File(fullPath), out);
 			out.println("--------------------------------------------------");
 			out.println("END OF REPORT");
 			out.close();
@@ -69,11 +77,15 @@ public class Run {
 			return null;
 		}
 	}
-	private static void listAndCheck(String path, PrintWriter out) {
-		File file = new File(path);
+	private static void listAndCheck(File file, PrintWriter out) {
+        if (!file.exists()) {
+            System.out.println("Warning: File does not exist: " + file);
+            return;
+        }
+
 		String[] files = file.list();
 		for(int i=0 ; i < files.length ; i++){
-			File fileInQuestion = new File(path + files[i]);
+			File fileInQuestion = new File(file, files[i]);
 	    	if(fileInQuestion.isFile()) {
 	    		String fileName = fileInQuestion.getName();
 	    		if(fileName.endsWith(".png") || fileName.endsWith(".notifyrc") || fileName.endsWith(".jpg") || fileName.endsWith(".jpeg") || 
@@ -100,7 +112,7 @@ public class Run {
 	    			fileInQuestion = null; //Garbage Collection :D
 	    		}
 	    	} else {
-	    		listAndCheck(path + files[i] + "/", out);
+				listAndCheck(new File(file, files[i]), out);
 	    	}
 	    }
 	}
@@ -194,3 +206,5 @@ public class Run {
 			out.println(authorList.get(i).getEmail() + " has edited " + authorList.get(i).getNumOfFiles());
 	}
 }
+
+// kate: tab-width 4; replace-tabs off; tab-indents on; space-indent off;
