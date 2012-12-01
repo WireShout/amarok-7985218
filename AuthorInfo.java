@@ -1,28 +1,14 @@
-/*Amarok GNU GPLv2+ Checker and Stat Generator
-
-Copyright (C) 2012 Jason Spriggs <jason@jasonspriggs.com>
-
-This program is free software; you can redistribute it and/or
-modify it under the terms of the GNU General Public License
-as published by the Free Software Foundation; either version 2
-of the License, or (at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
-*/
+import java.util.ArrayList;
 
 public class AuthorInfo {
 	private String email;
 	private int count;
+	private ArrayList<Integer> years = new ArrayList<Integer>();
 	
 	public AuthorInfo(String e) {
-		email = e;
+		email = e.split(";;;")[0];
+		if(e.split(";;;").length == 2)
+			years.add(Integer.parseInt(e.split(";;;")[1]));
 		count = 1;
 	}
 	public String getEmail() {
@@ -33,5 +19,21 @@ public class AuthorInfo {
 	}
 	public int getNumOfFiles() {
 		return count;
+	}
+	public void addYear(int y){
+		boolean found = false;
+		for(int i:years) {
+			if(i == y)
+				found = true;
+		}
+		if(!found)
+			years.add(y);
+	}
+	public String getCopyrightYears() {
+		String returnVal = "";
+		for(int i:years) {
+			returnVal += i + " ";
+		}
+		return returnVal;
 	}
 }
