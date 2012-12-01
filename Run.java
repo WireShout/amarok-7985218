@@ -170,7 +170,14 @@ public class Run {
                     	if(contactArray.length == 2){
                     		String[] email = contactArray[1].split(">");
                     		if(email.length == 2){
-                            	authors.add(email[0]);
+                    			String[] split = line.split("20");
+                    			if(split.length == 2){
+                    				int year = Integer.parseInt("20" + line.split("20")[1].substring(0, 2));
+                    				//System.out.println(year);
+                                	authors.add(email[0] + ";;;" + year);
+                                } else {
+                    				authors.add(email[0]);
+                    			}
                     		}
                     	}
                     }
@@ -178,7 +185,7 @@ public class Run {
                 }
             } while(line != null);
             if(authors.size() == 0)
-            	out.println("ERROR - No Authors Detected");
+            	out.println("\t**No Authors Detected**");
         } catch (Exception e) {
         	e.printStackTrace();
         }
@@ -191,9 +198,12 @@ public class Run {
 		for(int i = 0; i < authorsOfFile.size(); i++){
 			boolean found = false;
 			for(int n = 0; n < authorList.size(); n++){
-				if(authorList.get(n).getEmail().equals(authorsOfFile.get(i))){
+				if(authorList.get(n).getEmail().equals(authorsOfFile.get(i).split(";;;")[0])){
 					authorList.get(n).addFile(loc);
 					found = true;
+					if(authorsOfFile.get(i).split(";;;").length == 2){
+						authorList.get(n).addYear(Integer.parseInt(authorsOfFile.get(i).split(";;;")[1]));
+					}
 				}
 			}
 			if(!found){
@@ -203,7 +213,7 @@ public class Run {
 	}
 	private static void listAuthorStats(PrintWriter out){
 		for(int i = 0; i < authorList.size(); i++)
-			out.println(authorList.get(i).getEmail() + " has edited " + authorList.get(i).getNumOfFiles());
+			out.println(authorList.get(i).getEmail() + " has edited " + authorList.get(i).getNumOfFiles() + " files in " + authorList.get(i).getCopyrightYears());
 	}
 }
 
